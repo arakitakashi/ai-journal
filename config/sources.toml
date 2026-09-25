@@ -1,0 +1,57 @@
+# 本文を確認できた記事だけを採用する。国内公式情報と各分野の一次情報を優先。
+[settings]
+repository = "arakitakashi/ai-journal"
+max_per_source = 8
+
+[[sources]]
+name = "Japan AISI"
+url = "https://aisi.go.jp/activity/"
+kind = "aisi"
+
+[[sources]]
+name = "デジタル庁"
+url = "https://www.digital.go.jp/rss/news.xml"
+filter_ai = true
+
+[[sources]]
+name = "内閣府"
+url = "https://www.cao.go.jp/rss/news.rdf"
+filter_ai = true
+
+[[sources]]
+name = "NIST"
+url = "https://www.nist.gov/news-events/news/rss.xml"
+filter_ai = true
+
+[[sources]]
+name = "OpenAI"
+url = "https://openai.com/news/rss.xml"
+
+[[sources]]
+name = "Google DeepMind"
+url = "https://deepmind.google/blog/rss.xml"
+
+[[sources]]
+name = "Hugging Face"
+url = "https://huggingface.co/blog/feed.xml"
+
+[[sources]]
+name = "LangChain"
+url = "https://www.langchain.com/blog/rss.xml"
+
+[[sources]]
+name = "Arize"
+url = "https://arize.com/blog/feed/"
+
+[[sources]]
+name = "AWS Machine Learning"
+url = "https://aws.amazon.com/blogs/machine-learning/feed/"
+
+[[sources]]
+name = "Google Cloud AI"
+url = "https://cloudblog.withgoogle.com/products/ai-machine-learning/rss/"
+
+[[sources]]
+name = "InfoQ AI"
+url = "https://feed.infoq.com/ai-ml-data-eng/"
+primary = false

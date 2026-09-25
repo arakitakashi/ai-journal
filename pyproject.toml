@@ -1,0 +1,42 @@
+[project]
+name = "ai-journal"
+version = "0.1.0"
+description = "AIガバナンス、評価、AI基盤のニュースを日次PRで届ける"
+readme = "README.md"
+authors = [
+    { name = "Araki_Takashi", email = "ellaydelgado@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "feedparser>=6.0.14",
+    "httpx>=0.28.1",
+    "lxml>=6.1.3",
+    "pydantic>=2.13.5",
+    "trafilatura>=2.2.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.7,<0.10.0"]
+build-backend = "uv_build"
+
+[project.scripts]
+ai-journal = "ai_journal.cli:main"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.13"
+check_untyped_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
