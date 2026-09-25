@@ -64,3 +64,32 @@ url = "https://aws.amazon.com/blogs/industries/category/industries/retail/feed/"
 [[sources]]
 name = "Microsoft Dynamics 365"
 url = "https://www.microsoft.com/en-us/dynamics-365/blog/feed/"
+
+# 世界各地域の企業自身による設計・運用事例。タイトルでAI関連と断定できない記事も本文で選別する。
+[[sources]]
+name = "Netflix TechBlog"
+url = "https://netflixtechblog.com/feed"
+
+[[sources]]
+name = "Spotify Engineering"
+url = "https://engineering.atspotify.com/feed/"
+
+[[sources]]
+name = "CyberAgent Developers"
+url = "https://developers.cyberagent.co.jp/blog/feed/"
+
+[[sources]]
+name = "Grab Engineering"
+url = "https://engineering.grab.com/feed.xml"
+
+[[sources]]
+name = "Mercado Libre Tech"
+url = "https://medium.com/feed/mercadolibre-tech"
+
+[[sources]]
+name = "Canva Engineering"
+url = "https://www.canva.dev/blog/engineering/feed.xml"
+
+[[sources]]
+name = "AWS Architecture"
+url = "https://aws.amazon.com/blogs/architecture/feed/"

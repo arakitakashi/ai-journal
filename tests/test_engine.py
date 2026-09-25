@@ -91,7 +91,7 @@ def test_no_news_marks_day_without_publishing(tmp_path: Path) -> None:
     assert store.load().last_checked == NOW
 
 
-@pytest.mark.parametrize("theme", ["小売業のAI活用事例", "バックオフィス効率化事例"])
+@pytest.mark.parametrize("theme", ["小売業のAI活用事例", "バックオフィス効率化事例", "企業AI基盤アーキテクチャ事例"])
 def test_business_case_can_be_validated_and_published(tmp_path: Path, theme: str) -> None:
     publisher = FakePublisher()
 
