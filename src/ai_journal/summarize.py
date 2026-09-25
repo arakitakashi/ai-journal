@@ -32,7 +32,7 @@ itemsが空の場合はoverviewも空にする。入力以外のURL、Markdown�
 
 
 class Summarizer:
-    def __init__(self, binary: str = "claude", model: str | None = None) -> None:
+    def __init__(self, binary: str = "codex", model: str | None = None) -> None:
         self.binary, self.model = binary, model
 
     def __call__(self, articles: list[Article]) -> Digest:
@@ -46,32 +46,66 @@ class Summarizer:
             }
             for index, a in enumerate(articles)
         ]
-        # ツール、MCP、カスタム設定を無効化し、記事本文だけを渡す。
-        command = [
-            self.binary,
-            "-p",
-            "--safe-mode",
-            "--tools",
-            "",
-            "--strict-mcp-config",
-            "--mcp-config",
-            '{"mcpServers":{}}',
-            "--no-session-persistence",
-            "--output-format",
-            "json",
-            "--json-schema",
-            json.dumps(Digest.model_json_schema()),
-            "--system-prompt",
-            SYSTEM,
-        ]
-        if self.model:
-            command.extend(["--model", self.model])
         environment = {
             key: value
             for key, value in os.environ.items()
             if key not in {"GH_TOKEN", "GITHUB_TOKEN", "GMAIL_APP_PASSWORD"}
         }
         with tempfile.TemporaryDirectory(prefix="ai-journal-llm-") as directory:
+            root = Path(directory)
+            schema, instructions, output = root / "schema.json", root / "instructions.md", root / "result.json"
+            schema.write_text(json.dumps(Digest.model_json_schema()), encoding="utf-8")
+            instructions.write_text(SYSTEM, encoding="utf-8")
+            # 認証は既存のChatGPTログインを使用し、ユーザー設定や外部連携は読み込まない。
+            command = [
+                self.binary,
+                "exec",
+                "--ignore-user-config",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--sandbox",
+                "read-only",
+                "--json",
+                "--color",
+                "never",
+                "--output-schema",
+                str(schema),
+                "--output-last-message",
+                str(output),
+                "-c",
+                f"model_instructions_file={json.dumps(str(instructions))}",
+                "-c",
+                'approval_policy="never"',
+                "-c",
+                'web_search="disabled"',
+                "-c",
+                "project_doc_max_bytes=0",
+                "-c",
+                'model_reasoning_effort="medium"',
+            ]
+            for feature in (
+                "shell_tool",
+                "unified_exec",
+                "apps",
+                "plugins",
+                "hooks",
+                "multi_agent",
+                "browser_use",
+                "browser_use_external",
+                "computer_use",
+                "in_app_browser",
+                "image_generation",
+                "view_image",
+                "code_mode_host",
+                "skill_search",
+                "memories",
+                "shell_snapshot",
+                "workspace_dependencies",
+            ):
+                command.extend(["--disable", feature])
+            if self.model:
+                command.extend(["--model", self.model])
+            command.append("-")
             response = subprocess.run(
                 command,
                 input=json.dumps(payload, ensure_ascii=False),
@@ -79,21 +113,20 @@ class Summarizer:
                 text=True,
                 timeout=900,
                 check=False,
-                cwd=Path(directory),
+                cwd=root,
                 env=environment,
             )
-        try:
-            envelope = json.loads(response.stdout)
-        except json.JSONDecodeError as exc:
-            raise RuntimeError(
-                f"Claude CLI が有効なJSONを返しませんでした（終了コード {response.returncode}）"
-            ) from exc
-        if response.returncode or envelope.get("is_error"):
-            detail = str(envelope.get("result", "認証状態と利用上限を確認してください"))[:400]
-            raise RuntimeError(f"Claude CLI エラー（HTTP {envelope.get('api_error_status', '不明')}）: {detail}")
-        structured = envelope.get("structured_output")
-        if structured is None:
-            structured = json.loads(envelope["result"])
-        digest = Digest.model_validate(structured)
+            events = [json.loads(line) for line in response.stdout.splitlines() if line.strip()]
+            errors = [
+                event.get("message") or event.get("error", {}).get("message")
+                for event in events
+                if event.get("type") in {"error", "turn.failed"}
+            ]
+            if response.returncode or errors:
+                detail = next((str(message) for message in errors if message), response.stderr[-400:])
+                raise RuntimeError(f"Codex CLI エラー（終了コード {response.returncode}）: {detail[:400]}")
+            if not output.is_file():
+                raise RuntimeError("Codex CLI の構造化出力がありません")
+            digest = Digest.model_validate_json(output.read_text(encoding="utf-8"))
         validate_digest(digest, articles)
         return digest

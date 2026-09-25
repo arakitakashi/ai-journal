@@ -21,9 +21,9 @@ PDFのみの記事、有料本文、アクセス制限された本文は対象�
 
 ## 実行環境
 
-macOS、miseで管理するPython 3.13以降、uv、GitHub CLI、Claude CLIを使用します。
-`gh auth status` と `claude auth status` で認証を確認してください。
-Claude CLIは既存のローカル認証を使います。
+macOS、miseで管理するPython 3.13以降、uv、GitHub CLI、Codex CLIを使用します。
+`gh auth status` と `codex login status` で認証を確認してください。
+Codex CLIは既存のChatGPTログインを使います。
 APIキー、Gmail認証、GitHub Actionsは使用しません。
 
 ```bash
@@ -36,8 +36,9 @@ bash scripts/install-launchagent.sh
 
 `--collect-only` は本文収集のみ、`--dry-run` は記事生成まで実行します。
 どちらもPRや日次処理状態を変更しません。
-生成はClaudeの利用枠を消費します。
-`CLAUDE_MODEL` でモデルを指定でき、省略時はClaude CLIの既定モデルを使います。
+生成はCodexの利用枠を消費します。
+`CODEX_MODEL` でモデルを指定でき、省略時はユーザー設定を読み込まないCodex CLIの既定モデルを使います。
+`CODEX_BIN` でCodex CLIの実行パスを指定できます。
 
 ## 日次処理と復旧
 
@@ -70,7 +71,9 @@ PR本文の `ai-journal:v1` メタデータは復旧に使うため残してく�
 
 ## セキュリティと運用
 
-外部記事は未信頼データとして扱い、Claudeにはツール、MCP、カスタム設定を無効化して本文だけを渡します。
+外部記事は未信頼データとして扱います。
+Codexは読み取り専用サンドボックスで実行し、シェル、ブラウザー、アプリ、プラグイン、フックを無効化します。
+ユーザー設定とプロジェクト指示は読み込まず、構造化出力スキーマと編集方針を指定して本文だけを渡します。
 生成時の入力は全候補合計16万文字、1記事最大18,000文字を上限とし、長い本文を省略した場合は提示範囲に限定して解説します。
 URLは公開HTTP/HTTPSに限定し、リダイレクト先も検査します。
 本文はPRに転載せず、要約と出典だけを投稿します。
@@ -92,4 +95,4 @@ uv run mypy src
 ```
 
 日付境界、再試行、収集失敗、PR作成直後の通信切断、状態復旧、出典検証をテストします。
-CLIのオプションは [Claude Code公式リファレンス](https://code.claude.com/docs/en/cli-reference) を参照してください。
+CLIのオプションは [Codex公式の非対話実行ガイド](https://developers.openai.com/codex/noninteractive/) を参照してください。

@@ -45,7 +45,7 @@ def main() -> None:
                 store,
                 GitHub(config["settings"]["repository"]),
                 collector,
-                Summarizer(os.environ.get("CLAUDE_BIN", "claude"), os.environ.get("CLAUDE_MODEL")),
+                Summarizer(os.environ.get("CODEX_BIN", "codex"), os.environ.get("CODEX_MODEL")),
                 dry_run=args.dry_run,
             )
         if args.output:

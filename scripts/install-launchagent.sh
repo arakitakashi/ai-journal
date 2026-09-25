@@ -1,5 +1,5 @@
 #!/bin/bash
-# インストール済みの認証情報は gh / claude が管理する。plist に秘密情報を含めない。
+# インストール済みの認証情報は gh / codex が管理する。plist に秘密情報を含めない。
 set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LABEL="com.arakitakashi.ai-journal"
