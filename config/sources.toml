@@ -55,3 +55,12 @@ url = "https://cloudblog.withgoogle.com/products/ai-machine-learning/rss/"
 name = "InfoQ AI"
 url = "https://feed.infoq.com/ai-ml-data-eng/"
 primary = false
+
+# 見出しにAIと書かれない導入事例も拾い、本文でAIの役割を確認して選別する。
+[[sources]]
+name = "AWS Retail"
+url = "https://aws.amazon.com/blogs/industries/category/industries/retail/feed/"
+
+[[sources]]
+name = "Microsoft Dynamics 365"
+url = "https://www.microsoft.com/en-us/dynamics-365/blog/feed/"

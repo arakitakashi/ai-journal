@@ -91,6 +91,20 @@ def test_no_news_marks_day_without_publishing(tmp_path: Path) -> None:
     assert store.load().last_checked == NOW
 
 
+@pytest.mark.parametrize("theme", ["小売業のAI活用事例", "バックオフィス効率化事例"])
+def test_business_case_can_be_validated_and_published(tmp_path: Path, theme: str) -> None:
+    publisher = FakePublisher()
+
+    def summarize_case(articles: list[Article]) -> Digest:
+        payload = {"overview": "業務へのAI導入事例。", "items": [{**ITEM.model_dump(), "theme": theme}]}
+        return Digest.model_validate(payload)
+
+    run(Store(tmp_path), publisher, collect, summarize_case, now=NOW)
+    assert publisher.calls == 1
+    assert publisher.records[0].urls == [ARTICLE.url]
+    assert Store(tmp_path).load().outcome == "published"
+
+
 def test_closed_or_unmerged_pr_is_seen_after_state_loss(tmp_path: Path) -> None:
     publisher = FakePublisher()
     publisher.records = [Published(day="2026-09-25", until=NOW - timedelta(days=1), urls=[ARTICLE.url], url="pr")]
