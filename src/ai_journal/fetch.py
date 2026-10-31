@@ -13,7 +13,7 @@ from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
 import feedparser
 import httpx
 from lxml import html
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from .content import extract_body
 from .models import Article, Collection
@@ -22,12 +22,31 @@ from .state import JST, window_start
 logger = logging.getLogger(__name__)
 
 
+AI_TITLE_PATTERN = r"\bAI\b|人工知能|生成AI|LLM|machine learning"
+
+
 class Source(BaseModel):
     name: str
     url: str
     kind: Literal["rss", "aisi"] = "rss"
     primary: bool = True
     filter_ai: bool = False
+    # 見出しに対する正規表現。汎用ニュースサイトの候補を分野に絞る。filter_ai より優先する。
+    filter: str | None = None
+
+    @field_validator("filter")
+    @classmethod
+    def _compilable(cls, value: str | None) -> str | None:
+        if value is not None:
+            try:
+                re.compile(value)
+            except re.error as exc:
+                raise ValueError(f"filter の正規表現が不正: {exc}") from exc
+        return value
+
+    @property
+    def title_pattern(self) -> str | None:
+        return self.filter or (AI_TITLE_PATTERN if self.filter_ai else None)
 
 
 def canonical_url(url: str) -> str:
@@ -180,10 +199,8 @@ class Collector:
                 )
             result.since = min(result.since or source_since, source_since)
             eligible = [a for a in articles if source_since <= a.published_at <= until and a.url not in seen]
-            if source.filter_ai:
-                eligible = [
-                    a for a in eligible if re.search(r"\bAI\b|人工知能|生成AI|LLM|machine learning", a.title, re.I)
-                ]
+            if pattern := source.title_pattern:
+                eligible = [a for a in eligible if re.search(pattern, a.title, re.I)]
             eligible.sort(key=lambda a: a.published_at, reverse=True)
             if len(eligible) > self.max_per_source:
                 result.warnings.append(f"{source.name}：取得上限により最新{self.max_per_source}件を確認")

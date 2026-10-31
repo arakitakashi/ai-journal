@@ -11,6 +11,7 @@ AIシステムを設計し運用する技術リーダー向けに、世界のニ
 - **小売業のAI活用事例**：店舗運営、接客、需要予測、在庫や発注、商品管理、価格設定、ECでの導入事例。
 - **バックオフィス効率化事例**：経理、請求書処理、人事、総務、法務、購買、社内問い合わせ対応でのAI活用。
 - **企業AI基盤アーキテクチャ事例**：世界の企業が実際に構築、移行、運用するAI/ML基盤の構成、設計判断、運用上の課題。
+- **技術トレンド**：AIシステムの設計に関わるアーキテクチャとAPI分野の業界ニュースと、技術トレンドレポートの新版。
 
 アーキテクチャ事例では、データ処理から学習や評価、推論、RAG、エージェント実行、監視までの接続関係を重視します。
 技術選定の理由とトレードオフ、公表された処理規模、性能、費用、信頼性を基に、自社へ適用する際の判断材料を整理します。
@@ -23,6 +24,20 @@ AIシステムを設計し運用する技術リーダー向けに、世界のニ
 本番導入と実証実験を区別し、人による確認や運用上の制約も本文で確認できる範囲で示します。
 削減時間や費用などの数値は発表主体と測定条件を添え、未公表の効果を推測で補いません。
 製品宣伝や仮想的な利用例だけの記事、AIを使わない一般的な業務改善は事例として採用しません。
+
+技術トレンドでは、業界ニュースサイトとトレンドレポートを定期的に確認し、新しい技術や手法に対する感覚を調整します。
+業界ニュースの取得元はInfoQのArchitecture & Design、DZone、The New Stack、CNCF Blog、ThoughtWorks Insightsです。
+汎用ニュースサイトは見出しを `filter` の正規表現で絞り、AI基盤の設計判断に関係する記事だけを候補にします。
+Technology RadarやInfoQ Trends Reportなどレポートの新版は、これらの取得元の記事として告知されたときに採用します。
+レポートの位置付けや評価は発行者の見解として示し、業界全体の合意とは扱いません。
+
+次の情報源はRSSや公開HTML本文が得られないため自動収集の対象外で、週次または半期ごとに手動で確認します。
+
+- [ThoughtWorks Technology Radar](https://www.thoughtworks.com/radar)：年2回。新版の解説記事はThoughtWorks Insightsから収集。
+- [Gartner Magic Quadrant for Full Life Cycle API Management](https://www.gartner.com/en/documents)：有料レポート。
+- [CNCF Tech Radar](https://radar.cncf.io/)：更新停止中。調査やレポートの告知はCNCF Blogから収集。
+- [InfoQ Trends Reports](https://www.infoq.com/trends/)：年次。記事としてはInfoQのフィードから収集。
+- [r/softwarearchitecture](https://www.reddit.com/r/softwarearchitecture/)：スレッド本文が短く、本文検査の対象にならない。
 
 一次情報を優先し、専門メディアで補います。
 RSSの要約だけでは採用せず、公開されたHTML本文を取得できた記事だけを候補にします。

@@ -93,3 +93,36 @@ url = "https://www.canva.dev/blog/engineering/feed.xml"
 [[sources]]
 name = "AWS Architecture"
 url = "https://aws.amazon.com/blogs/architecture/feed/"
+
+# アーキテクチャとAPI分野の業界ニュースとトレンドレポート。
+# 汎用ニュースサイトは見出しの filter で AI基盤の設計に関係する記事に絞り、候補数の増加で本文上限が下がるのを防ぐ。
+[[sources]]
+name = "InfoQ Architecture & Design"
+url = "https://feed.infoq.com/architecture-design/"
+primary = false
+
+[[sources]]
+name = "DZone"
+url = "https://feeds.dzone.com/home"
+primary = false
+filter = "architect|\\bAPIs?\\b|agent|\\bAI\\b|\\bLLMs?\\b|\\bRAG\\b|\\bMCP\\b|microservice|event-driven|gateway|platform|observab|serverless|trend|radar|\\breports?\\b"
+
+[[sources]]
+name = "The New Stack"
+url = "https://thenewstack.io/feed/"
+primary = false
+filter = "architect|\\bAPIs?\\b|agent|\\bAI\\b|\\bLLMs?\\b|\\bRAG\\b|\\bMCP\\b|microservice|event-driven|gateway|platform|observab|serverless|trend|radar|\\breports?\\b"
+
+# CNCF Tech Radar の後継にあたる調査やレポートはブログで告知される。
+[[sources]]
+name = "CNCF Blog"
+url = "https://www.cncf.io/feed/"
+primary = false
+filter = "architect|\\bAPIs?\\b|agent|\\bAI\\b|\\bLLMs?\\b|platform|radar|\\breports?\\b|survey|trend"
+
+# Technology Radar の新版や解説は Insights 全体のフィードに含まれる。約3.4MBあり取得上限4MBに近い。
+[[sources]]
+name = "ThoughtWorks Insights"
+url = "https://www.thoughtworks.com/rss/insights.xml"
+primary = false
+filter = "architect|\\bAPIs?\\b|agent|\\bAI\\b|\\bLLMs?\\b|platform|radar|trend"

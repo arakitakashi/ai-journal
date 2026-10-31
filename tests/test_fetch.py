@@ -53,3 +53,37 @@ def test_private_url_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_tracking_parameters_do_not_change_article_identity() -> None:
     assert canonical_url("https://example.com/a?utm_source=x&id=1#title") == "https://example.com/a?id=1"
+
+
+def test_custom_title_filter_keeps_only_matching_articles(monkeypatch: pytest.MonkeyPatch) -> None:
+    source = Source(name="news", url="https://example.com/rss", filter=r"architect|\bAPI\b")
+    now = datetime(2026, 9, 26, 8, tzinfo=JST)
+    titles = ("Evolutionary architecture in practice", "Rapid API design", "Weekend reading list")
+    articles = [
+        Article(url=f"https://example.com/{i}", title=t, source=source.name, published_at=now - timedelta(hours=1))
+        for i, t in enumerate(titles)
+    ]
+    monkeypatch.setattr(fetch, "_feed", lambda s: (s, articles, [], True))
+    monkeypatch.setattr(fetch, "_body", lambda a: (a, True))
+    result = Collector([source])(now - timedelta(days=1), now, set(), {})
+    assert [a.url for a in result.articles] == ["https://example.com/0", "https://example.com/1"]
+
+
+def test_configured_filters_do_not_match_unrelated_words() -> None:
+    import re
+    import tomllib
+    from pathlib import Path
+
+    config = tomllib.loads((Path(__file__).parents[1] / "config/sources.toml").read_text(encoding="utf-8"))
+    patterns = [s["filter"] for s in config["sources"] if s.get("filter")]
+    assert patterns
+    for pattern in patterns:
+        for title in ("Storage tiering at scale", "Coverage reported", "Fragmentation", "Hello from Kotlin"):
+            assert not re.search(pattern, title, re.I), (pattern, title)
+        assert re.search(pattern, "Evaluating RAG in Production", re.I) or "RAG" not in pattern
+        assert re.search(pattern, "Technology Radar Vol. 34", re.I)
+
+
+def test_invalid_filter_pattern_is_rejected_at_configuration() -> None:
+    with pytest.raises(ValueError):
+        Source(name="news", url="https://example.com/rss", filter="(")

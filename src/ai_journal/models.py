@@ -24,7 +24,13 @@ class Item(BaseModel):
     model_config = ConfigDict(extra="forbid")
     article_id: int
     theme: Literal[
-        "ガバナンス", "評価", "AI基盤", "小売業のAI活用事例", "バックオフィス効率化事例", "企業AI基盤アーキテクチャ事例"
+        "ガバナンス",
+        "評価",
+        "AI基盤",
+        "小売業のAI活用事例",
+        "バックオフィス効率化事例",
+        "企業AI基盤アーキテクチャ事例",
+        "技術トレンド",
     ]
     title: str
     facts: str
